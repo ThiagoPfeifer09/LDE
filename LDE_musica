@@ -1,0 +1,282 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct music {
+    char titulo[256];
+    char artista[256];
+    char letra[256];
+    int codigo;
+    int execucoes;
+};
+
+struct nodo_LDE {
+    struct nodo_LDE *prox, *ante;
+    struct music *info;
+};
+
+struct desc_LDE {
+    struct nodo_LDE *inicio, *fim;
+    int tamanho;
+};
+
+
+struct music *criarMusica(const char *titulo, const char *artista, const char *letra, int codigo, int execucoes);
+struct desc_LDE *criarLista();
+void inserirMusica(struct desc_LDE *minhaLista, struct music *novaMusica, int posicao);
+struct music *consultarMusica(struct desc_LDE *minhaLista, int codigo);
+void removerMusica(struct desc_LDE *minhaLista, int codigo);
+void liberarLista(struct desc_LDE *minhaLista);
+void imprimirLista(struct desc_LDE *minhaLista);
+
+
+int main() {
+
+    int escolha = -1, posicao;
+    struct nodo_LDE *novoNodo = NULL;
+    struct desc_LDE *minhaLista = NULL;
+
+    while (escolha != 0) {
+        setbuf(stdin, NULL);
+        printf("-------MENU-------\n");
+        printf("1- Criar lista\n");
+        printf("2- Inserir música\n");
+        printf("3- Remover música\n");
+        printf("4- Consultar música\n");
+        printf("5- Imprimir\n");
+        printf("6- Liberar\n");
+        printf("0- Sair\n");
+        printf("------------------\n");
+        printf("Digite a opção desejada: ");
+        scanf("%d", &escolha);
+
+        switch (escolha) {
+
+        case 1:
+            if (minhaLista == NULL) {
+                minhaLista = criarLista();
+                printf("Lista criada com sucesso!\n");
+            } else {
+                printf("A lista já foi criada!\n");
+            }
+            break;
+
+        case 2:
+            if (minhaLista != NULL) {
+                char titulo[256], artista[256], letra[256];
+                int codigo, execucoes;
+                printf("Digite o título da música: ");
+                getchar(); 
+                fgets(titulo, 256, stdin);
+                titulo[strcspn(titulo, "\n")] = '\0'; 
+
+                printf("Digite o artista da música: ");
+                fgets(artista, 256, stdin);
+                artista[strcspn(artista, "\n")] = '\0'; 
+
+                printf("Digite a letra da música: ");
+                fgets(letra, 256, stdin);
+                letra[strcspn(letra, "\n")] = '\0'; 
+
+                printf("Digite o código da música: ");
+                scanf("%d", &codigo);
+
+                printf("Digite o número de execuções da música: ");
+                scanf("%d", &execucoes);
+
+                printf("Digite a posição que deseja inserir a música: ");
+                scanf("%d", &posicao);
+
+                inserirMusica(minhaLista, criarMusica(titulo, artista, letra, codigo, execucoes), posicao);
+                printf("Música inserida com sucesso!\n");
+            } else {
+                printf("A lista não foi criada ainda! Por favor, crie a lista primeiro.\n");
+            }
+            break;
+
+        case 3:
+            if (minhaLista != NULL) {
+                int codigo;
+                printf("Digite o código da música que deseja remover: ");
+                scanf("%d", &codigo);
+                removerMusica(minhaLista, codigo);
+            } else {
+                printf("A lista não foi criada ainda! Por favor, crie a lista primeiro.\n");
+            }
+            break;
+
+        case 4:
+            if (minhaLista != NULL) {
+                int codigo;
+                printf("Digite o código da música que deseja consultar: ");
+                scanf("%d", &codigo);
+                struct music *musica = consultarMusica(minhaLista, codigo);
+                if (musica != NULL) {
+                    printf("Música encontrada: %s - %s\n", musica->titulo, musica->artista);
+                } else {
+                    printf("Música não encontrada!\n");
+                }
+            } else {
+                printf("A lista não foi criada ainda! Por favor, crie a lista primeiro.\n");
+            }
+            break;
+
+        case 5:
+            if (minhaLista != NULL) {
+                imprimirLista(minhaLista);
+            } else {
+                printf("A lista não foi criada ainda! Por favor, crie a lista primeiro.\n");
+            }
+            break;
+
+        case 6:
+            if (minhaLista != NULL) {
+                liberarLista(minhaLista);
+                minhaLista = NULL;
+                printf("Lista liberada!\n");
+            } else {
+                printf("A lista já está vazia!\n");
+            }
+            break;
+
+        case 0:
+            printf("Saindo...\n");
+            break;
+
+        default:
+            printf("Opção inválida! tente uma das opcoes do menu\n");
+            break;
+        }
+    }
+
+    return 0;
+}
+
+// Funções
+struct desc_LDE *criarLista() {
+    struct desc_LDE *lista = malloc(sizeof(struct desc_LDE));
+    if (lista != NULL) {
+        lista->inicio = NULL;
+        lista->tamanho = 0;
+    }
+    return lista;
+}
+
+struct music *criarMusica(const char *titulo, const char *artista, const char *letra, int codigo, int execucoes) {
+    struct music *novaMusica = malloc(sizeof(struct music));
+    if (novaMusica != NULL) {
+        strcpy(novaMusica->titulo, titulo);
+        strcpy(novaMusica->artista, artista);
+        strcpy(novaMusica->letra, letra);
+        novaMusica->codigo = codigo;
+        novaMusica->execucoes = execucoes;
+    }
+    return novaMusica;
+}
+void inserirMusica(struct desc_LDE *minhaLista, struct music *novaMusica, int posicao) {
+    struct nodo_LDE *novoNodo = malloc(sizeof(struct nodo_LDE));
+    if (novoNodo == NULL) {
+        printf("Erro ao alocar memória para novo nó.\n");
+        return;
+    }
+
+    novoNodo->info = novaMusica;
+    novoNodo->prox = NULL;
+
+    if (posicao < 0) {
+        printf("Posição inválida.\n");
+        free(novoNodo);
+        return;
+    }
+
+    if (minhaLista->inicio == NULL || posicao == 0) {
+        novoNodo->prox = minhaLista->inicio;
+        minhaLista->inicio = novoNodo;
+        minhaLista->tamanho++;
+        return;
+    }
+
+    if (posicao >= minhaLista->tamanho) {
+        posicao = minhaLista->tamanho;
+    }
+
+    struct nodo_LDE *anterior = NULL;
+    struct nodo_LDE *atual = minhaLista->inicio;
+    int posicaoAtual = 0;
+
+    while (atual != NULL && posicaoAtual < posicao) {
+        anterior = atual;
+        atual = atual->prox;
+        posicaoAtual++;
+    }
+
+    anterior->prox = novoNodo;
+    novoNodo->prox = atual;
+    minhaLista->tamanho++;
+}   
+
+void imprimirLista(struct desc_LDE *minhaLista) {
+    if (minhaLista == NULL || minhaLista->inicio == NULL) {
+        printf("A lista está vazia.\n");
+        return;
+    }
+
+    struct nodo_LDE *atual = minhaLista->inicio;
+    int posicao = 0;
+
+    printf("=== Lista de Músicas ===\n");
+    while (atual != NULL) {
+        printf("Posição: %d\n", posicao);
+        printf("Título: %s\n", atual->info->titulo);
+        printf("Artista: %s\n", atual->info->artista);
+        printf("Letra: %s\n", atual->info->letra);
+        printf("Código: %d\n", atual->info->codigo);
+        printf("Execuções: %d\n", atual->info->execucoes);
+        printf("\n");
+        atual = atual->prox;
+        posicao++;
+    }
+}
+
+struct music *consultarMusica(struct desc_LDE *minhaLista, int codigo) {
+    struct nodo_LDE *atual = minhaLista->inicio;
+    while (atual != NULL) {
+        if (atual->info->codigo == codigo) {
+            return atual->info;
+        }
+        atual = atual->prox;
+    }
+    return NULL;
+}
+
+void removerMusica(struct desc_LDE *minhaLista, int codigo) {
+    struct nodo_LDE *anterior = NULL;
+    struct nodo_LDE *atual = minhaLista->inicio;
+
+    while (atual != NULL) {
+        if (atual->info->codigo == codigo) {
+            if (anterior == NULL) {
+                 minhaLista->inicio = atual->prox;
+            } else {
+                anterior->prox = atual->prox;
+            }
+            free(atual->info);
+            free(atual);
+            minhaLista->tamanho--;
+            return;
+        }
+        anterior = atual;
+        atual = atual->prox;
+    }
+}
+
+void liberarLista(struct desc_LDE *minhaLista) {
+    struct nodo_LDE *atual = minhaLista->inicio;
+    while (atual != NULL) {
+        struct nodo_LDE *proximo = atual->prox;
+        free(atual->info);
+        free(atual);
+        atual = proximo;
+    }
+    free(minhaLista);
+}
