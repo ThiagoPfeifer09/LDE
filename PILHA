@@ -22,6 +22,7 @@ struct descp{
 
 int main() {
 
+struct descp *NovaPilha;
 int op;
 
 
@@ -54,6 +55,11 @@ case 5:
 break;
 
 case 6:
+break;
+
+case 0:
+printf("\nSaindo do programa!\n");
+return -1;
 break;
 
 default:
