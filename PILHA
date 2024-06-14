@@ -2,11 +2,64 @@
 #include <stdlib.h>
 #include <string.h>
 
+struct musica{
+ 
+
+}; 
+
+
+struct nodo{
+  struct nodo *prox;
+  struct musica*music;
+};
+
+struct descp{
+  struct nodo pilha;
+  int tamanho;
+};
+
 
 
 int main() {
 
+int op;
 
+
+while(op!=0){
+
+printf("\n1-Criar PILHA\n");
+printf("2-Inserir música\n");
+printf("3-Consultar música\n");
+printf("4-Imprimir pilha\n");
+printf("5-Remover da pilha\n");
+printf("6-\n");
+printf("0-Sair\n");
+
+scanf("%d", &op);
+
+
+case 1:
+break;
+
+case 2:
+break;
+
+case 3:
+break;
+
+case 4:
+break;
+
+case 5:
+break;
+
+case 6:
+break;
+
+default:
+printf("\nInsira uma opção válida\n");
+break;
+}
 
 
 return 0;
