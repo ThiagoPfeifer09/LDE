@@ -70,3 +70,14 @@ break;
 
 return 0;
 }
+
+
+struct descp CriaDesc(){
+
+struct descp *Pilha = (struct descp* )malloc(sizeof(struct descp));
+
+Pilha->tamanho=0;
+Pilha->pilha=NULL;
+
+return 
+}
