@@ -13,23 +13,25 @@ char titulo[256];
 
 struct nodo{
   struct nodo *prox;
+  struct nodo *ant;
   struct musica *music;
 };
 
 struct descp{
-  struct nodo *topo;
+  struct nodo *inicio;
+  struct nodo *fim;
   int tamanho;
 };
 
 
 struct musica* CriaMusica();
-struct descp* CriaDesc();
+struct descp* CriaFila();
 struct nodo* CriaNodo(struct musica *NovaMusica);
-void push(struct nodo *NovoElement, struct descp *NovaFila);
+void InsereFila(struct nodo *NovoElement, struct descp *NovaFila);
 void imprime(struct descp *NovaFila);
 void ConsultaMusic(struct descp* NovaFila, int code);
-struct nodo *pop(struct descp *NovaFila);
-void makeNull(struct descp *NovaFila);
+struct nodo *RemoveFila(struct descp *NovaFila);
+void LiberaFila(struct descp *NovaFila);
 
 int main() {
 
@@ -41,11 +43,11 @@ struct nodo *NovoElement = NULL;
 while(op!=0){
 
 printf("\n=================");
-printf("\n1-Criar pilha\n");
+printf("\n1-Criar fila\n");
 printf("2-Inserir música\n");
 printf("3-Consultar música\n");
-printf("4-Imprimir pilha\n");
-printf("5-Remover da pilha\n");
+printf("4-Imprimir fila\n");
+printf("5-Remover da fila\n");
 printf("6-Libera\n");
 printf("0-Sair\n");
 printf("=================\n");
@@ -54,7 +56,7 @@ scanf("%d", &op);
 switch(op){
 case 1:
 if(NovaFila == NULL){
-  NovaFila=CriaDesc();
+  NovaFila=CriaFila();
   if(NovaFila!=NULL){
     printf("\nPILHA CRIADA COM SUCESSO\n");
   }
@@ -71,10 +73,10 @@ case 2:
 if(NovaFila != NULL){
 NovaMusica=CriaMusica();
 NovoElement = CriaNodo(NovaMusica);
-push(NovoElement, NovaFila);
+InsereFila(NovoElement, NovaFila);
 }
   else{
-    printf("Crie a lista antes!");
+    printf("Crie a fila antes!");
   }
 
 
@@ -82,19 +84,19 @@ break;
 
 case 3:
   if(NovaFila!=NULL){
-  printf("Digite o código da música para buscar na lista: ");
+  printf("Digite o código da música para buscar na fila: ");
   scanf("%d", &code);
   ConsultaMusic(NovaFila, code);
   }
   else{
-    printf("Crie a lista antes!");
+    printf("Crie a fila antes!");
   }
 break;
 
 
 case 4:
   if(NovaFila == NULL){
-    printf("Crie a lista antes!");
+    printf("Crie a fila antes!");
   }
   else{
   imprime(NovaFila);
@@ -104,15 +106,15 @@ break;
   
 case 5:
   if(NovaFila!=NULL){
-  pop(NovaFila);
+  RemoveFila(NovaFila);
   }
 else{
-  printf("Lista não alocada");
+  printf("Fila não alocada");
 }
 break;
 
 case 6:
-  makeNull(NovaFila);
+  LiberaFila(NovaFila);
 break;
 
   
@@ -131,12 +133,13 @@ return 0;
 }
 
 
-struct descp* CriaDesc(){
+struct descp* CriaFila(){
 
 struct descp *FILA = (struct descp* )malloc(sizeof(struct descp));
 
   FILA->tamanho=0;
-  FILA->topo=NULL;
+  FILA->inicio=NULL;
+  FILA->fim=NULL;
 
 return FILA;
 }
@@ -148,6 +151,7 @@ struct nodo *novoNodo = (struct nodo *)malloc(sizeof(struct nodo));
 
 novoNodo->music=NovaMusica;
 novoNodo->prox=NULL;
+novoNodo->ant=NULL;
 
 return novoNodo;
 }
@@ -188,19 +192,26 @@ MUSIC->codigo=codigo;
 return MUSIC;
 }
 
-void push(struct nodo *NovoElement, struct descp *NovaFila){
-struct nodo *aux=NovaFila->topo;
-  
-  while(aux->prox!=NULL){
-    aux=aux->prox;
+
+void InsereFila(struct nodo *NovoElement, struct descp *NovaFila){
+struct nodo *aux=NovaFila->fim;
+  if(NovaFila->fim == NULL){
+    NovaFila->fim=NovoElement;
+    NovaFila->inicio=NovoElement;
   }
-
-
+  else{
+    NovaFila->fim->prox=NovoElement;
+    NovaFila->fim=NovoElement;
+  }
+  NovaFila->tamanho++;
 }
+
+
+
 
 void imprime(struct descp *NovaFila){
 
-  struct nodo *aux = NovaFila->topo;
+  struct nodo *aux = NovaFila->inicio;
 
   while(aux !=NULL){
     printf("\n\nTITULO: %s ",aux->music->titulo);
@@ -214,7 +225,7 @@ void imprime(struct descp *NovaFila){
 }
 
 void ConsultaMusic(struct descp* NovaFila, int code){
-  struct nodo *aux = NovaFila->topo; 
+  struct nodo *aux = NovaFila->inicio; 
 
   while(aux != NULL){
     if(aux->music->codigo == code){
@@ -229,22 +240,19 @@ void ConsultaMusic(struct descp* NovaFila, int code){
 
 }
 
-struct nodo *pop(struct descp *NovaFila){
-struct nodo *aux = NovaFila->topo;
-    NovaFila->topo=NovaFila->topo->prox;
-    NovaFila->tamanho--;
+struct nodo *RemoveFila(struct descp *NovaFila){
+struct nodo *aux = NovaFila->inicio;
+  NovaFila->inicio=NovaFila->inicio->prox;
+  NovaFila->tamanho--;
   return aux;
 }
 
-int empty(struct descp *NovaFila){
-  if(NovaFila->topo ==NULL)
-    return 1;
-    else
-    return 0;
-}
-
-void makeNull(struct descp *NovaFila){
-    while(empty(NovaFila) == 0){
-      free(pop(NovaFila));
+void LiberaFila(struct descp *NovaFila){
+struct nodo *aux;
+    while (NovaFila->inicio != NULL) {
+        aux = RemoveFila(NovaFila);
+        free(aux->music);
+        free(aux);
     }
+    free(NovaFila);
 }
