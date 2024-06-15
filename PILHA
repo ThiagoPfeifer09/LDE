@@ -40,9 +40,15 @@ scanf("%d", &op);
 
 
 case 1:
+
+NovaPilha=CriaDesc();
+
 break;
 
 case 2:
+
+=CriaMusica;
+
 break;
 
 case 3:
