@@ -17,53 +17,103 @@ struct nodo{
 };
 
 struct descp{
-  struct nodo pilha;
+  struct nodo *topo;
   int tamanho;
 };
 
 
+struct musica* CriaMusica();
+struct descp* CriaDesc();
+struct nodo* CriaNodo(struct musica *NovaMusica);
+void push(struct nodo *NovoElement, struct descp *NovaPilha);
+void imprime(struct descp *NovaPilha);
+void ConsultaMusic(struct descp* NovaPilha, int code);
+struct nodo *pop(struct descp *NovaPilha);
+void makeNull(struct descp *NovaPilha);
 
 int main() {
 
-struct descp *NovaPilha;
-int op;
-
+struct descp *NovaPilha = NULL;
+int op, code=0;
+struct musica *NovaMusica = NULL;
+struct nodo *NovoElement = NULL;
 
 while(op!=0){
 
-printf("\n1-Criar PILHA\n");
+printf("\n=================");
+printf("\n1-Criar pilha\n");
 printf("2-Inserir música\n");
 printf("3-Consultar música\n");
 printf("4-Imprimir pilha\n");
 printf("5-Remover da pilha\n");
 printf("6-Libera\n");
 printf("0-Sair\n");
-
+printf("=================\n");
 scanf("%d", &op);
 
-
+switch(op){
 case 1:
-
+if(NovaPilha == NULL){
 NovaPilha=CriaDesc();
-
+  if(NovaPilha!=NULL){
+    printf("\nPILHA CRIADA COM SUCESSO\n");
+  }
+  else{
+    printf("Erro ao alocar descritor\n");
+  }
+}
+  else{
+    printf("\nDescritor já alocado!\n");
+  }
 break;
 
 case 2:
+if(NovaPilha != NULL){
+NovaMusica=CriaMusica();
+NovoElement = CriaNodo(NovaMusica);
+push(NovoElement, NovaPilha);
+}
+  else{
+    printf("Crie a lista antes!");
+  }
 
-=CriaMusica();
-
+  
 break;
 
 case 3:
+  if(NovaPilha!=NULL){
+  printf("Digite o código da música para buscar na lista: ");
+  scanf("%d", &code);
+  ConsultaMusic(NovaPilha, code);
+  }
+  else{
+    printf("Crie a lista antes!");
+  }
 break;
 
+  
 case 4:
+  if(NovaPilha == NULL){
+    printf("Crie a lista antes!");
+  }
+  else{
+  imprime(NovaPilha);
+  }
+  
 break;
 
 case 5:
+  if(NovaPilha!=NULL){
+  pop(NovaPilha);
+  }
+else{
+  printf("Lista não alocada");
+}
+  
 break;
 
 case 6:
+  makeNull(NovaPilha);
 break;
 
 case 0:
@@ -75,58 +125,124 @@ default:
 printf("\nInsira uma opção válida\n");
 break;
 }
-
+}
 
 return 0;
 }
 
 
-struct descp CriaDesc(){
+struct descp* CriaDesc(){
 
 struct descp *Pilha = (struct descp* )malloc(sizeof(struct descp));
 
 Pilha->tamanho=0;
-Pilha->pilha=NULL;
+Pilha->topo=NULL;
 
 return Pilha;
 }
 
 
-struct nodo CriaNodo(){
+struct nodo* CriaNodo(struct musica *NovaMusica){
 
-struct nodo *novoNodo=(struct nodo)malloc(sizeof(struct nodo));
+struct nodo *novoNodo = (struct nodo *)malloc(sizeof(struct nodo));
 
+novoNodo->music=NovaMusica;
 novoNodo->prox=NULL;
 
-
+return novoNodo;
 }
 
 struct musica* CriaMusica(){
 
+struct musica* MUSIC = (struct musica*)malloc(sizeof(struct musica));
 
-                char titulo[256], artista[256], letra[256];
-                int codigo, execucoes;
-                
+char titulo[256], artista[256], letra[256];
+int codigo, execucoe;
+
 printf("Digite o título da música: ");
-          getchar(); 
-               fgets(titulo, 256, stdin);
-                titulo[strcspn(titulo, "\n")] = '\0'; 
+getchar(); 
+fgets(titulo, 256, stdin);
+titulo[strcspn(titulo, "\n")] = '\0'; 
 
-                printf("Digite o artista da música: ");
-                fgets(artista, 256, stdin);
-                artista[strcspn(artista, "\n")] = '\0'; 
+printf("Digite o artista da música: ");
+fgets(artista, 256, stdin);
+artista[strcspn(artista, "\n")] = '\0'; 
 
-                printf("Digite a letra da música: ");
-                fgets(letra, 256, stdin);
-                letra[strcspn(letra, "\n")] = '\0'; 
+printf("Digite a letra da música: ");
+fgets(letra, 256, stdin);
+letra[strcspn(letra, "\n")] = '\0'; 
 
-                printf("Digite o código da música: ");
-                scanf("%d", &codigo);
+printf("Digite o código da música: ");
+scanf("%d", &codigo);
 
-                printf("Digite o número de execuções da música: ");
-                scanf("%d", &execucoes);
+printf("Digite o número de execuções da música: ");
+scanf("%d", &execucoe);
 
-                printf("Digite a posição que deseja inserir a música: ");
-                scanf("%d", &posicao);
 
+strcpy(MUSIC->titulo, titulo);
+strcpy(MUSIC->artista, artista);
+strcpy(MUSIC->letra, letra);
+MUSIC->execucoes=execucoe;
+MUSIC->codigo=codigo;
+
+return MUSIC;
+}
+
+void push(struct nodo *NovoElement, struct descp *NovaPilha){
+
+NovoElement->prox = NovaPilha->topo;
+NovaPilha->topo = NovoElement;
+NovaPilha->tamanho++;
+
+}
+
+void imprime(struct descp *NovaPilha){
+
+  struct nodo *aux = NovaPilha->topo;
+  
+  while(aux !=NULL){
+    printf("\n\nTITULO: %s ",aux->music->titulo);
+    printf("\t ARTISTA: %s",aux->music->artista);
+    printf("\nLETRA: %s",aux->music->letra);
+    printf("\nCÓDIGO: %d",aux->music->codigo);
+    printf("\tEXECUÇÕES: %d",aux->music->execucoes);
+    aux = aux->prox;
+  }
+  printf("\n");
+}
+
+void ConsultaMusic(struct descp* NovaPilha, int code){
+  struct nodo *aux = NovaPilha->topo; 
+
+  while(aux != NULL){
+    if(aux->music->codigo == code){
+      printf("\n\nTITULO: %s ",aux->music->titulo);
+      printf("\t ARTISTA: %s",aux->music->artista);
+      printf("\nLETRA: %s",aux->music->letra);
+      printf("\nCÓDIGO: %d",aux->music->codigo);
+      printf("\tEXECUÇÕES: %d",aux->music->execucoes);
+    }
+    aux=aux->prox;
+  }
+  
+}
+
+struct nodo *pop(struct descp *NovaPilha){
+struct nodo *aux = NovaPilha->topo;
+  NovaPilha->topo=NovaPilha->topo->prox;
+  NovaPilha->tamanho--;
+  return aux;
+}
+
+int empty(struct descp *NovaPilha){
+  if(NovaPilha->topo ==NULL)
+    return 1;
+    else
+    return 0;
+}
+
+void makeNull(struct descp *NovaPilha){
+    while(empty(NovaPilha) == 0){
+      free(pop(NovaPilha));
+    }
 }
