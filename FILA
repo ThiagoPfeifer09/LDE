@@ -1,0 +1,250 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct musica{
+char titulo[256];
+  char artista[256];
+  char letra[256];
+  int codigo;
+  int execucoes;
+}; 
+
+
+struct nodo{
+  struct nodo *prox;
+  struct musica *music;
+};
+
+struct descp{
+  struct nodo *topo;
+  int tamanho;
+};
+
+
+struct musica* CriaMusica();
+struct descp* CriaDesc();
+struct nodo* CriaNodo(struct musica *NovaMusica);
+void push(struct nodo *NovoElement, struct descp *NovaFila);
+void imprime(struct descp *NovaFila);
+void ConsultaMusic(struct descp* NovaFila, int code);
+struct nodo *pop(struct descp *NovaFila);
+void makeNull(struct descp *NovaFila);
+
+int main() {
+
+struct descp *NovaFila = NULL;
+int op, code=0;
+struct musica *NovaMusica = NULL;
+struct nodo *NovoElement = NULL;
+
+while(op!=0){
+
+printf("\n=================");
+printf("\n1-Criar pilha\n");
+printf("2-Inserir música\n");
+printf("3-Consultar música\n");
+printf("4-Imprimir pilha\n");
+printf("5-Remover da pilha\n");
+printf("6-Libera\n");
+printf("0-Sair\n");
+printf("=================\n");
+scanf("%d", &op);
+
+switch(op){
+case 1:
+if(NovaFila == NULL){
+  NovaFila=CriaDesc();
+  if(NovaFila!=NULL){
+    printf("\nPILHA CRIADA COM SUCESSO\n");
+  }
+  else{
+    printf("Erro ao alocar descritor\n");
+  }
+}
+  else{
+    printf("\nDescritor já alocado!\n");
+  }
+break;
+
+case 2:
+if(NovaFila != NULL){
+NovaMusica=CriaMusica();
+NovoElement = CriaNodo(NovaMusica);
+push(NovoElement, NovaFila);
+}
+  else{
+    printf("Crie a lista antes!");
+  }
+
+
+break;
+
+case 3:
+  if(NovaFila!=NULL){
+  printf("Digite o código da música para buscar na lista: ");
+  scanf("%d", &code);
+  ConsultaMusic(NovaFila, code);
+  }
+  else{
+    printf("Crie a lista antes!");
+  }
+break;
+
+
+case 4:
+  if(NovaFila == NULL){
+    printf("Crie a lista antes!");
+  }
+  else{
+  imprime(NovaFila);
+  }
+break;
+
+  
+case 5:
+  if(NovaFila!=NULL){
+  pop(NovaFila);
+  }
+else{
+  printf("Lista não alocada");
+}
+break;
+
+case 6:
+  makeNull(NovaFila);
+break;
+
+  
+case 0:
+printf("\nSaindo do programa!\n");
+return -1;
+break;
+
+default:
+printf("\nInsira uma opção válida\n");
+break;
+}
+}
+
+return 0;
+}
+
+
+struct descp* CriaDesc(){
+
+struct descp *FILA = (struct descp* )malloc(sizeof(struct descp));
+
+  FILA->tamanho=0;
+  FILA->topo=NULL;
+
+return FILA;
+}
+
+
+struct nodo* CriaNodo(struct musica *NovaMusica){
+
+struct nodo *novoNodo = (struct nodo *)malloc(sizeof(struct nodo));
+
+novoNodo->music=NovaMusica;
+novoNodo->prox=NULL;
+
+return novoNodo;
+}
+
+struct musica* CriaMusica(){
+
+struct musica* MUSIC = (struct musica*)malloc(sizeof(struct musica));
+
+char titulo[256], artista[256], letra[256];
+int codigo, execucoe;
+
+printf("Digite o título da música: ");
+getchar(); 
+fgets(titulo, 256, stdin);
+titulo[strcspn(titulo, "\n")] = '\0'; 
+
+printf("Digite o artista da música: ");
+fgets(artista, 256, stdin);
+artista[strcspn(artista, "\n")] = '\0'; 
+
+printf("Digite a letra da música: ");
+fgets(letra, 256, stdin);
+letra[strcspn(letra, "\n")] = '\0'; 
+
+printf("Digite o código da música: ");
+scanf("%d", &codigo);
+
+printf("Digite o número de execuções da música: ");
+scanf("%d", &execucoe);
+
+
+strcpy(MUSIC->titulo, titulo);
+strcpy(MUSIC->artista, artista);
+strcpy(MUSIC->letra, letra);
+MUSIC->execucoes=execucoe;
+MUSIC->codigo=codigo;
+
+return MUSIC;
+}
+
+void push(struct nodo *NovoElement, struct descp *NovaFila){
+struct nodo *aux=NovaFila->topo;
+  
+  while(aux->prox!=NULL){
+    aux=aux->prox;
+  }
+
+
+}
+
+void imprime(struct descp *NovaFila){
+
+  struct nodo *aux = NovaFila->topo;
+
+  while(aux !=NULL){
+    printf("\n\nTITULO: %s ",aux->music->titulo);
+    printf("\t ARTISTA: %s",aux->music->artista);
+    printf("\nLETRA: %s",aux->music->letra);
+    printf("\nCÓDIGO: %d",aux->music->codigo);
+    printf("\tEXECUÇÕES: %d",aux->music->execucoes);
+    aux = aux->prox;
+  }
+  printf("\n");
+}
+
+void ConsultaMusic(struct descp* NovaFila, int code){
+  struct nodo *aux = NovaFila->topo; 
+
+  while(aux != NULL){
+    if(aux->music->codigo == code){
+      printf("\n\nTITULO: %s ",aux->music->titulo);
+      printf("\t ARTISTA: %s",aux->music->artista);
+      printf("\nLETRA: %s",aux->music->letra);
+      printf("\nCÓDIGO: %d",aux->music->codigo);
+      printf("\tEXECUÇÕES: %d",aux->music->execucoes);
+    }
+    aux=aux->prox;
+  }
+
+}
+
+struct nodo *pop(struct descp *NovaFila){
+struct nodo *aux = NovaFila->topo;
+    NovaFila->topo=NovaFila->topo->prox;
+    NovaFila->tamanho--;
+  return aux;
+}
+
+int empty(struct descp *NovaFila){
+  if(NovaFila->topo ==NULL)
+    return 1;
+    else
+    return 0;
+}
+
+void makeNull(struct descp *NovaFila){
+    while(empty(NovaFila) == 0){
+      free(pop(NovaFila));
+    }
+}
