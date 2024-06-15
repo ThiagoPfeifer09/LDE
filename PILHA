@@ -29,7 +29,7 @@ void push(struct nodo *NovoElement, struct descp *NovaPilha);
 void imprime(struct descp *NovaPilha);
 void ConsultaMusic(struct descp* NovaPilha, int code);
 struct nodo *pop(struct descp *NovaPilha);
-void makeNull(struct descp *NovaPilha);
+void LiberaPilha(struct descp *NovaPilha);
 
 int main() {
 
@@ -113,7 +113,7 @@ else{
 break;
 
 case 6:
-  makeNull(NovaPilha);
+  LiberaPilha(NovaPilha);
 break;
 
 case 0:
@@ -234,15 +234,12 @@ struct nodo *aux = NovaPilha->topo;
   return aux;
 }
 
-int empty(struct descp *NovaPilha){
-  if(NovaPilha->topo ==NULL)
-    return 1;
-    else
-    return 0;
-}
-
-void makeNull(struct descp *NovaPilha){
-    while(empty(NovaPilha) == 0){
-      free(pop(NovaPilha));
+void LiberaPilha(struct descp *NovaPilha){
+struct nodo *aux;
+    while (NovaPilha->topo != NULL) {
+        aux = pop(NovaPilha);
+        free(aux->music);
+        free(aux);
     }
+    free(NovaPilha);
 }
