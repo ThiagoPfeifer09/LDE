@@ -1,0 +1,6 @@
+comp:
+	gcc fila.c -c -g
+	gcc main.c fila.o -o fila -g
+apaga:
+	rm *.o
+	rm fila
