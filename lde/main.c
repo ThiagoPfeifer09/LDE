@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lde.h"
-
+#include "LDE.h"
 
 int main() {
 
@@ -59,34 +58,34 @@ int main() {
                 printf("Digite o número de execuções da música: ");
                 scanf("%d", &execucoes);
 
+                novaMusica = criarMusica(titulo, artista, letra, codigo, execucoes);                
+                novoNodo = CriaNodo(novaMusica);
+
                 printf("Digite a posição que deseja inserir a música: ");
                 scanf("%d", &posicao);
 
-                novaMusica = criarMusica(titulo, artista, letra, codigo, execucoes);
-                
-                novoNodo = CriaNodo(novaMusica);
                 
                 inserirMusica(minhaLista, novoNodo, posicao);
 
-                printf("Música inserida com sucesso!\n");
+                printf("\nMúsica inserida com sucesso!\n\n");
             } else {
-                printf("A lista não foi criada ainda! Por favor, crie a lista primeiro.\n");
+                printf("\nA lista não foi criada ainda! Por favor, crie a lista primeiro.\n");
             }
             break;
 
         case 3:
-            if (minhaLista != NULL) {
+            if (minhaLista != NULL && minhaLista->tamanho != 0) {
                 int codigo;
                 printf("Digite a posicao da música que deseja remover: ");
                 scanf("%d", &codigo);
                 removerMusica(minhaLista, codigo);
             } else {
-                printf("A lista não foi criada ainda! Por favor, crie a lista primeiro.\n");
+                printf("\nA lista não foi criada ainda! Por favor, crie a lista primeiro.\n");
             }
             break;
 
         case 4:
-            if (minhaLista != NULL) {
+            if (minhaLista != NULL && minhaLista->tamanho != 0) {
                 int codigo;
                 printf("Digite o código da música que deseja consultar: ");
                 scanf("%d", &codigo);
@@ -97,12 +96,12 @@ int main() {
                     printf("Música não encontrada!\n");
                 }
             } else {
-                printf("A lista não foi criada ainda! Por favor, crie a lista primeiro.\n");
+                printf("\nA lista não foi criada ainda! Por favor, crie a lista primeiro.\n");
             }
             break;
 
         case 5:
-            if (minhaLista != NULL) {
+            if (minhaLista != NULL && minhaLista->tamanho != 0) {
                 imprimirLista(minhaLista);
             } else {
                 printf("A lista não foi criada ainda! Por favor, crie a lista primeiro.\n");
@@ -110,7 +109,7 @@ int main() {
             break;
 
         case 6:
-            if (minhaLista != NULL) {
+            if (minhaLista != NULL && minhaLista->tamanho != 0) {
                 liberarLista(minhaLista);
                 minhaLista = NULL;
                 printf("Lista liberada!\n");
