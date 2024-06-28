@@ -8,11 +8,11 @@ int main() {
     int escolha = -1, posicao;
     struct nodo_LDE *novoNodo = NULL;
     struct desc_LDE *minhaLista = NULL;
-    struct musica *novaMusica = NULL;
+    struct music *novaMusica = NULL;
 
     while (escolha != 0) {
         setbuf(stdin, NULL);
-        printf("-------MENU-------\n");
+        printf("\n\n-------MENU-------\n");
         printf("1- Criar lista\n");
         printf("2- Inserir música\n");
         printf("3- Remover música\n");
@@ -86,12 +86,20 @@ int main() {
 
         case 4:
             if (minhaLista != NULL && minhaLista->tamanho != 0) {
-                int codigo;
-                printf("Digite o código da música que deseja consultar: ");
-                scanf("%d", &codigo);
-                struct music *musica = consultarMusica(minhaLista, codigo);
+                char titulo[256];
+                printf("Digite o título da música que deseja consultar: ");
+                getchar(); // Limpar o buffer do teclado
+                fgets(titulo, 256, stdin);
+                titulo[strcspn(titulo, "\n")] = '\0'; 
+
+                struct music *musica = consultarMusicaPorTitulo(minhaLista, titulo);
                 if (musica != NULL) {
-                    printf("Música encontrada: %s - %s\n", musica->titulo, musica->artista);
+                    printf("\n\nMúsica encontrada:\n");
+                    printf("Título: %s\n", musica->titulo);
+                    printf("Artista: %s\n", musica->artista);
+                    printf("Letra: %s\n", musica->letra);
+                    printf("Código: %d\n", musica->codigo);
+                    printf("Execuções: %d\n\n", musica->execucoes);
                 } else {
                     printf("Música não encontrada!\n");
                 }
