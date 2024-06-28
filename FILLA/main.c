@@ -30,7 +30,7 @@ case 1:
 if(NovaFila == NULL){
   NovaFila=CriaFila();
   if(NovaFila!=NULL){
-    printf("\nPILHA CRIADA COM SUCESSO\n");
+    printf("\nFILA CRIADA COM SUCESSO\n");
   }
   else{
     printf("Erro ao alocar descritor\n");
