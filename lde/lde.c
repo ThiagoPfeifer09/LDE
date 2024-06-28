@@ -182,3 +182,16 @@ void liberarLista(struct desc_LDE *minhaLista) {
     }
     free(minhaLista);
 }
+
+struct music *consultarMusicaPorTitulo(struct desc_LDE *minhaLista, const char *titulo) {
+    struct nodo_LDE *atual = minhaLista->inicio;
+
+    while (atual != NULL) {
+        if (strcasecmp(atual->info->titulo, titulo) == 0) {
+            return atual->info;
+        }
+        atual = atual->prox;
+    }
+
+    return NULL; 
+}
