@@ -25,4 +25,3 @@ void removerMusica(struct desc_LDE *minhaLista, int codigo);
 void liberarLista(struct desc_LDE *minhaLista);
 void imprimirLista(struct desc_LDE *minhaLista);
 struct nodo_LDE* CriaNodo(struct music *novaMusica);
-
