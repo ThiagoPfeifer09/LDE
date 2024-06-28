@@ -9,6 +9,7 @@ struct descp *NovaPilha = NULL;
 int op, code=0;
 struct musica *NovaMusica = NULL;
 struct nodo *NovoElement = NULL;
+char titulo[256];
 
 while(op!=0){
 
@@ -49,43 +50,51 @@ push(NovoElement, NovaPilha);
     printf("Crie a lista antes!");
   }
 
-  
+
 break;
 
 case 3:
-  if(NovaPilha!=NULL){
-  printf("Digite o código da música para buscar na lista: ");
-  scanf("%d", &code);
-  ConsultaMusic(NovaPilha, code);
-  }
-  else{
-    printf("Crie a lista antes!");
+  if (NovaPilha != NULL && NovaPilha->tamanho > 0) {
+    printf("Digite o título da música para buscar na pilha: ");
+    getchar(); // Limpar o buffer
+    fgets(titulo, 256, stdin);
+    titulo[strcspn(titulo, "\n")] = '\0'; // Remover nova linha
+    ConsultaMusica(NovaPilha, titulo);
+  } else {
+    printf("\nCrie a pilha e adicione músicas antes!\n");
   }
 break;
 
-  
+
 case 4:
   if(NovaPilha == NULL){
-    printf("Crie a lista antes!");
+    printf("\nCrie a lista antes!\n");
+  }
+  else if (NovaPilha->tamanho == 0){
+    printf("\nNão há itens na PILHA\n");
   }
   else{
   imprime(NovaPilha);
   }
-  
+
 break;
 
 case 5:
-  if(NovaPilha!=NULL){
+  if(NovaPilha!=NULL && NovaPilha->tamanho!=0){
   pop(NovaPilha);
   }
 else{
-  printf("Lista não alocada");
+  printf("Lista não alocada ou sem músicas!");
 }
-  
+
 break;
 
 case 6:
+  if(NovaPilha != NULL && NovaPilha->tamanho>0)
   LiberaPilha(NovaPilha);
+  else{
+    printf("Lista não alocada");
+  }
 break;
 
 case 0:
