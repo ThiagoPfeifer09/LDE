@@ -1,4 +1,3 @@
-
 struct musica{
 char titulo[256];
   char artista[256];
@@ -24,7 +23,7 @@ struct descp* CriaDesc();
 struct nodo* CriaNodo(struct musica *NovaMusica);
 void push(struct nodo *NovoElement, struct descp *NovaPilha);
 void imprime(struct descp *NovaPilha);
-void ConsultaMusic(struct descp* NovaPilha, int code);
+void ConsultaMusica(struct descp* NovaPilha, char* titulo);
 struct nodo *pop(struct descp *NovaPilha);
 void LiberaPilha(struct descp *NovaPilha);
-
+void ImprimeMusica(struct musica *music);
