@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lde.h"
+#include "LDE.h"
 
 // Funções
 struct desc_LDE *criarLista() {
     struct desc_LDE *lista = malloc(sizeof(struct desc_LDE));
     if (lista != NULL) {
         lista->inicio = NULL;
+        lista->fim = NULL;
         lista->tamanho = 0;
     }
     return lista;
@@ -113,47 +114,63 @@ struct music *consultarMusica(struct desc_LDE *minhaLista, int codigo) {
     return NULL;
 }
 
-void removerMusica(struct desc_LDE *minhaLista, int codigo) {
-  struct nodo_LDE *aux = minhaLista->inicio;
-  struct nodo_LDE *auxant = minhaLista->inicio;
-  int pos=0;
 
-  if(codigo > minhaLista->tamanho){
-    printf("\nPosição inválida, digite um posição já alocada\n");
-  }
-  if(minhaLista->inicio == NULL){
-    printf("\nLista não possui itens, insira itens na lista\n");
-  }
-
-  else if(codigo==0){ //remove do começo
-    minhaLista->inicio = minhaLista->inicio->prox;
-    minhaLista->inicio->ante = NULL;
-    minhaLista->tamanho--;
-  }
-
-  else if(codigo>0 && codigo<minhaLista->tamanho-1){ //remove no meio
-  while(aux!=NULL){
-    auxant=aux;
-    aux=aux->prox;
-    pos++;
-
-    if(pos==codigo){
-  auxant->prox=aux->prox;
-  aux->prox->ante=auxant;
-  minhaLista->tamanho--;
+void removerMusica(struct desc_LDE *minhaLista, int posicao) {
+    if (minhaLista == NULL || minhaLista->inicio == NULL) {
+        printf("A lista está vazia ou não existe.\n");
+        return;
     }
-  } 
+
+    if (posicao < 0 || posicao >= minhaLista->tamanho) {
+        printf("Posição inválida.\n");
+        return;
+    }
+
+    struct nodo_LDE *aux = minhaLista->inicio;
+    struct nodo_LDE *auxant = NULL;
+    int pos = 0;
+
+    // Encontrar o nodo na posição desejada
+    while (pos < posicao && aux != NULL) {
+        auxant = aux;
+        aux = aux->prox;
+        pos++;
+    }
+
+    if (aux == NULL) {
+        printf("Erro ao encontrar a posição na lista.\n");
+        return;
+    }
+
+    // Caso a lista tenha apenas um item
+    if (minhaLista->inicio == minhaLista->fim) {
+        minhaLista->inicio = NULL;
+        minhaLista->fim = NULL;
+    } else if (aux == minhaLista->inicio) { // Remove do começo
+        minhaLista->inicio = minhaLista->inicio->prox;
+        if (minhaLista->inicio != NULL) {
+            minhaLista->inicio->ante = NULL;
+        }
+    } else if (aux == minhaLista->fim) { // Remove do fim
+        minhaLista->fim = auxant;
+        if (minhaLista->fim != NULL) {
+            minhaLista->fim->prox = NULL;
+        }
+    } else { // Remove no meio
+        auxant->prox = aux->prox;
+        if (aux->prox != NULL) {
+            aux->prox->ante = auxant;
+        }
+    }
+
+    printf("Removido: Título: %s, Artista: %s\n", aux->info->titulo, aux->info->artista);
+
+    free(aux->info);
+    free(aux);
+    minhaLista->tamanho--;
 }
-  else{
-    while(aux!=NULL){
-      auxant=aux;
-      aux=aux->prox;
-      pos++;
-      if(pos==codigo){
-        auxant->prox=NULL;
-        minhaLista->tamanho--;
-  }}}
-}
+
+
 
 void liberarLista(struct desc_LDE *minhaLista) {
     struct nodo_LDE *atual = minhaLista->inicio;
